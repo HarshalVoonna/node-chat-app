@@ -13,6 +13,16 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
   console.log('new user connected');
+  socket.emit('newMessage', {
+    from: 'Mike',
+    text: 'Learnign node.js socket.io',
+    createdAt: 144
+  });
+
+  socket.on('createMessage', (message) => {
+      console.log('createMessage : New message composed by the user',message);
+  });
+
   socket.on('disconnect', () => {
     console.log('User was disconnected');
   });
