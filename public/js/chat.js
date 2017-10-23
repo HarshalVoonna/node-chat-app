@@ -77,6 +77,13 @@ socket.on('updateUserList', function (users) {
   $('#users').html(ol);
 });
 
+socket.on('setTypingEvent', function(name) {
+  $('#setTyping').text(`${name} is typing ...`);
+  setTimeout(function() {
+    $('#setTyping').text('');
+  }, 1000);
+});
+
 $('#message-form').on('submit', function (e) {
   e.preventDefault();
   var messageTextbox = $('[name=message]');
@@ -104,4 +111,12 @@ locationButton.on('click', function() {
     locationButton.removeAttr('disabled').text('Send location');
     alert('Unable to fetch location');
   })
+});
+
+var searchTimeout;
+$('#message-input').on('keypress', function () {
+    if (searchTimeout != undefined) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function () {
+      socket.emit('triggerTypingEvent');
+    }, 250);
 });

@@ -57,8 +57,15 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('getRoomList', (message) => {
+  socket.on('getRoomList', () => {
     socket.emit('setRoomList', users.getRoomList());
+  });
+
+  socket.on('triggerTypingEvent', () => {
+    var user = users.getUser(socket.id);
+    if(user) {
+      socket.broadcast.to(user.room).emit('setTypingEvent', user.name);
+    }
   });
 
   socket.on('disconnect', () => {
