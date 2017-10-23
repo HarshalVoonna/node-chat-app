@@ -23,6 +23,10 @@ io.on('connection', (socket) => {
     if(!isRealString(params.name) || !isRealString(params.room)){
       return callback('Name and Room name are required.');
     }
+    params.room = params.room.toLowerCase();
+    if(users.isDuplicateUser(params.name, params.room)) {
+      return callback(`User with the given name already exists in this room.`);
+    }
     socket.join(params.room);
     //socket.leave(params.room);
     users.removeUser(socket.id);
@@ -51,6 +55,10 @@ io.on('connection', (socket) => {
     if(user) {
       io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
     }
+  });
+
+  socket.on('getRoomList', (message) => {
+    socket.emit('setRoomList', users.getRoomList());
   });
 
   socket.on('disconnect', () => {
